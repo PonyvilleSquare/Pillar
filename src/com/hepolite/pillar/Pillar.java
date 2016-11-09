@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.hepolite.pillar.database.Database;
 import com.hepolite.pillar.listener.ListenerManager;
 import com.hepolite.pillar.logging.Log;
+import com.hepolite.pillar.utility.NBTAPI;
 
 public class Pillar extends JavaPlugin
 {
@@ -20,8 +21,10 @@ public class Pillar extends JavaPlugin
 	{
 		instance = this;
 		Log.initialize(this);
+		NBTAPI.initialize();
 
 		listenerManager = new ListenerManager();
+		getServer().getPluginManager().registerEvents(listenerManager, instance);
 
 		// Set up a task that runs once every tick
 		Runnable task = new Runnable()

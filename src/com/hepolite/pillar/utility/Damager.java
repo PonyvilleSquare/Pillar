@@ -24,6 +24,20 @@ public class Damager
 {
 	private static final Function<? super Double, Double> ZERO = Functions.constant(-0.0);
 
+	private static String nextDeathMessage = null;
+
+	/** If the next attack kills a player, this method sets the death message that will be displayed */
+	public static void setNextDeathMessage(String message)
+	{
+		nextDeathMessage = message;
+	}
+
+	/** Returns the death message if any, or null if there was no death message stored */
+	public static String getNextDeathMessage()
+	{
+		return nextDeathMessage;
+	}
+
 	/** Applies some damage to the target */
 	public static void doDamage(double damage, LivingEntity target, DamageCause cause)
 	{
@@ -62,6 +76,7 @@ public class Damager
 			target.setLastDamageCause(event);
 			target.setHealth(Math.max(0.0, target.getHealth() - finalDamage));
 		}
+		setNextDeathMessage(null);
 	}
 
 	/** Applies some healing to the given target */
@@ -79,6 +94,12 @@ public class Damager
 
 	/** Creates a lightning strike at the given location */
 	public static void createLightningStrike(Location location, float strength, float radius, boolean affectPlayersOnly)
+	{
+		createLightningStrike(location, strength, radius, affectPlayersOnly, null);
+	}
+
+	/** Creates a lightning strike at the given location, from the given attacker */
+	public static void createLightningStrike(Location location, float strength, float radius, boolean affectPlayersOnly, LivingEntity attacker)
 	{
 		// Locate the highest point and strike the lightning there
 		double posX = location.getX();
@@ -112,7 +133,17 @@ public class Damager
 		{
 			if (!affectPlayersOnly || entity instanceof Player)
 			{
-				doDamage(strength, entity, null, DamageCause.LIGHTNING);
+				if (attacker != null)
+				{
+					if (attacker instanceof Player)
+						Damager.setNextDeathMessage("<player> was killed by " + attacker.getName() + ", using lightning");
+					else if (attacker.getCustomName() != null)
+						Damager.setNextDeathMessage("<player> was killed by " + attacker.getCustomName() + ", using lightning");
+				}
+				else
+					Damager.setNextDeathMessage("<player> was killed by lightning");
+
+				doDamage(strength, entity, attacker, DamageCause.LIGHTNING);
 				entity.setFireTicks((int) (15.0f * strength));
 			}
 		}

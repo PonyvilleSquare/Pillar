@@ -27,6 +27,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.hepolite.pillar.logging.Log;
+import com.hepolite.pillar.utility.NBTAPI;
+import com.hepolite.pillar.utility.NBTAPI.NBTList;
+import com.hepolite.pillar.utility.NBTAPI.NBTTag;
 
 public abstract class Settings
 {
@@ -131,6 +134,10 @@ public abstract class Settings
 			set(propertyName, (EntityType) value);
 		else if (value instanceof EntityType[])
 			set(propertyName, (EntityType[]) value);
+		else if (value instanceof NBTTag)
+			set(propertyName, (NBTTag) value);
+		else if (value instanceof NBTList)
+			set(propertyName, (NBTList) value);
 		else
 			config.set(propertyName, value);
 	}
@@ -168,6 +175,10 @@ public abstract class Settings
 			config.set(propertyName + ".name", meta.getDisplayName());
 			config.set(propertyName + ".lore", meta.getLore());
 		}
+
+		NBTTag tag = NBTAPI.getTag(item);
+		if (tag != null)
+			set(propertyName + ".nbt", tag);
 	}
 
 	private void set(String propertyName, ItemStack[] items)
@@ -215,16 +226,86 @@ public abstract class Settings
 		config.set(propertyName, types);
 	}
 
+	public void set(String field, NBTTag tag)
+	{
+		set(field, (Object) null);
+		for (String key : tag.getKeys())
+		{
+			String type = tag.format(key);
+
+			set(field + "." + key + ".type", type);
+			if (type.equals("tag"))
+				set(field + "." + key + ".value", tag.getTag(key));
+			else if (type.equals("list"))
+				set(field + "." + key + ".value", tag.getList(key));
+			else if (type.equals("string"))
+				set(field + "." + key + ".value", tag.getString(key));
+			else if (type.equals("int"))
+				set(field + "." + key + ".value", tag.getInt(key));
+			else if (type.equals("long"))
+				set(field + "." + key + ".value", tag.getLong(key));
+			else if (type.equals("short"))
+				set(field + "." + key + ".value", tag.getShort(key));
+			else if (type.equals("byte"))
+				set(field + "." + key + ".value", tag.getByte(key));
+			else if (type.equals("float"))
+				set(field + "." + key + ".value", tag.getFloat(key));
+			else if (type.equals("double"))
+				set(field + "." + key + ".value", tag.getDouble(key));
+		}
+	}
+
+	public void set(String field, NBTList tag)
+	{
+		set(field, (Object) null);
+		for (int i = 0; i < tag.size(); i++)
+		{
+			String format = tag.format(i);
+
+			set(field + "." + i + ".format", format);
+			if (format.equals("tag"))
+				set(field + "." + i + ".value", tag.getTag(i));
+			else if (format.equals("list"))
+				set(field + "." + i + ".value", tag.getList(i));
+			else if (format.equals("string"))
+				set(field + "." + i + ".value", tag.getString(i));
+			else if (format.equals("int"))
+				set(field + "." + i + ".value", tag.getInt(i));
+			else if (format.equals("long"))
+				set(field + "." + i + ".value", tag.getLong(i));
+			else if (format.equals("short"))
+				set(field + "." + i + ".value", tag.getShort(i));
+			else if (format.equals("byte"))
+				set(field + "." + i + ".value", tag.getByte(i));
+			else if (format.equals("float"))
+				set(field + "." + i + ".value", tag.getFloat(i));
+			else if (format.equals("double"))
+				set(field + "." + i + ".value", tag.getDouble(i));
+		}
+	}
+
 	/** Returns true if the given property exists in the config file */
 	public boolean has(String propertyName)
 	{
 		return config.contains(propertyName);
 	}
 
+	/** Removes the given field from the config */
+	public void remove(String propertyName)
+	{
+		config.set(propertyName, null);
+	}
+
 	/** Returns a boolean value from the config file */
 	public boolean getBool(String propertyName)
 	{
 		return config.getBoolean(propertyName);
+	}
+
+	/** Returns a long value from the config file */
+	public long getLong(String propertyName)
+	{
+		return config.getLong(propertyName);
 	}
 
 	/** Returns an integer value from the config file */
@@ -234,15 +315,27 @@ public abstract class Settings
 	}
 
 	/** Returns a short value from the config file */
-	public int getShort(String propertyName)
+	public short getShort(String propertyName)
 	{
 		return (short) config.getInt(propertyName);
+	}
+
+	/** Returns a byte value from the config file */
+	public byte getByte(String propertyName)
+	{
+		return (byte) config.getInt(propertyName);
 	}
 
 	/** Returns a floating point value from the config file */
 	public float getFloat(String propertyName)
 	{
 		return (float) config.getDouble(propertyName);
+	}
+
+	/** Returns a double point value from the config file */
+	public double getDouble(String propertyName)
+	{
+		return config.getDouble(propertyName);
 	}
 
 	/** Returns a string from the config file */
@@ -390,7 +483,12 @@ public abstract class Settings
 		List<String> lore = config.getStringList(propertyName + ".lore");
 
 		// Actually create the item
-		ItemStack item = new ItemStack(material, amount, meta);
+		ItemStack item = NBTAPI.getItemStack(material, amount, meta);
+
+		// Load additional information
+		if (has(propertyName + ".nbt"))
+			NBTAPI.setTag(item, getNBTTag(propertyName + ".nbt"));
+
 		ItemMeta itemMeta = item.getItemMeta();
 		if (name != null)
 			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
@@ -413,6 +511,67 @@ public abstract class Settings
 		for (String key : keys)
 			items.add(getItem(propertyName + "." + key));
 		return items;
+	}
+
+	/** Loads up a NBT Tag from the configuration */
+	public NBTTag getNBTTag(String field)
+	{
+		NBTTag tag = new NBTTag();
+
+		Set<String> keys = getKeys(field);
+		for (String key : keys)
+		{
+			String type = getString(field + "." + key + ".type");
+			if (type.equals("tag"))
+				tag.setTag(key, getNBTTag(field + "." + key + ".value"));
+			else if (type.equals("list"))
+				tag.setList(key, getNBTList(field + "." + key + ".value"));
+			else if (type.equals("string"))
+				tag.setString(key, getString(field + "." + key + ".value"));
+			else if (type.equals("int"))
+				tag.setInt(key, getInt(field + "." + key + ".value"));
+			else if (type.equals("long"))
+				tag.setLong(key, getLong(field + "." + key + ".value"));
+			else if (type.equals("short"))
+				tag.setShort(key, getShort(field + "." + key + ".value"));
+			else if (type.equals("byte"))
+				tag.setByte(key, getByte(field + "." + key + ".value"));
+			else if (type.equals("float"))
+				tag.setFloat(key, getFloat(field + "." + key + ".value"));
+			else if (type.equals("double"))
+				tag.setDouble(key, getDouble(field + "." + key + ".value"));
+		}
+		return tag;
+	}
+
+	/** Loads up a NBT List from the configuration */
+	public NBTList getNBTList(String field)
+	{
+		NBTList tag = new NBTList();
+
+		for (String key : getKeys(field))
+		{
+			String format = getString(field + "." + key + ".format");
+			if (format.equals("tag"))
+				tag.addTag(getNBTTag(field + "." + key + ".value"));
+			else if (format.equals("list"))
+				tag.addList(getNBTList(field + "." + key + ".value"));
+			else if (format.equals("string"))
+				tag.addString(getString(field + "." + key + ".value"));
+			else if (format.equals("int"))
+				tag.addInt(getInt(field + "." + key + ".value"));
+			else if (format.equals("long"))
+				tag.addLong(getLong(field + "." + key + ".value"));
+			else if (format.equals("short"))
+				tag.addShort(getShort(field + "." + key + ".value"));
+			else if (format.equals("byte"))
+				tag.addByte(getByte(field + "." + key + ".value"));
+			else if (format.equals("float"))
+				tag.addFloat(getFloat(field + "." + key + ".value"));
+			else if (format.equals("double"))
+				tag.addDouble(getDouble(field + "." + key + ".value"));
+		}
+		return tag;
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////

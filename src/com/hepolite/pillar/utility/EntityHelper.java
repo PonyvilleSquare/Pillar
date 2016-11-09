@@ -24,8 +24,14 @@ public class EntityHelper
 	/** Returns true if there was a clear path from the starting entity to the target entity */
 	public static boolean isPathClear(Entity start, Entity end)
 	{
-		Vector direction = end.getLocation().subtract(start.getLocation()).toVector();
-		BlockIterator it = new BlockIterator(start.getWorld(), start.getLocation().toVector(), direction.clone().normalize(), 0.0, (int) direction.length());
+		return isPathClear(start.getLocation(), end.getLocation());
+	}
+
+	/** Returns true if there was a clear path from the starting location to the target location */
+	public static boolean isPathClear(Location start, Location end)
+	{
+		Vector direction = (end.clone().subtract(start)).toVector();
+		BlockIterator it = new BlockIterator(start.getWorld(), start.toVector(), direction.clone().normalize(), 0.0, (int) direction.length());
 		while (it.hasNext())
 		{
 			Block block = it.next();
@@ -50,6 +56,13 @@ public class EntityHelper
 			}
 		}
 		return nearbyEntities;
+	}
+
+	/** Returns a list of entities within range, and there being a line of sight from the location to the entity */
+	public static List<LivingEntity> getEntitiesInVisualRange(Location location, float range)
+	{
+		// TODO: Implement me
+		return null;
 	}
 
 	/** Returns a list of entities at the given location. Assumes a boundingbox 1m*1m*2m for all entities */
