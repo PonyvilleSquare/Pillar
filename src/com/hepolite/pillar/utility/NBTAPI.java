@@ -126,12 +126,12 @@ public class NBTAPI
 			NBTTagList_get = classNBTTagList.getMethod("h", int.class);
 			NBTTagList_size = classNBTTagList.getMethod("size");
 			NBTTagString_get = classNBTTagString.getMethod("c_");
-			NBTTagInt_get = classNBTTagInt.getMethod("d");
-			NBTTagLong_get = classNBTTagLong.getMethod("c");
-			NBTTagShort_get = classNBTTagShort.getMethod("e");
-			NBTTagByte_get = classNBTTagByte.getMethod("f");
-			NBTTagFloat_get = classNBTTagFloat.getMethod("h");
-			NBTTagDouble_get = classNBTTagDouble.getMethod("g");
+			NBTTagInt_get = classNBTTagInt.getMethod("e");
+			NBTTagLong_get = classNBTTagLong.getMethod("d");
+			NBTTagShort_get = classNBTTagShort.getMethod("f");
+			NBTTagByte_get = classNBTTagByte.getMethod("g");
+			NBTTagFloat_get = classNBTTagFloat.getMethod("i");
+			NBTTagDouble_get = classNBTTagDouble.getMethod("h");
 
 			// Finalize
 			Log.log("No problems were detected in the NBT API!");
