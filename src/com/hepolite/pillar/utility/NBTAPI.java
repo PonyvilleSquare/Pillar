@@ -1,4 +1,4 @@
-package com.hepolite.mmob.utility;
+package com.hepolite.pillar.utility;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,37 +12,38 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import com.hepolite.mmob.Log;
+import com.hepolite.pillar.logging.Log;
 
+@SuppressWarnings("rawtypes")
 public class NBTAPI
 {
 	// Control variables
 	private static String version;
 
 	// Resources that are needed
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classCraftItemStack;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNMSItemStack;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTBase;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagCompound;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagList;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagString;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagInt;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagLong;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagShort;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagByte;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagFloat;
-	@SuppressWarnings("rawtypes")
+	
 	private static Class classNBTTagDouble;
 
 	private static Field CraftItemStack_handle;
@@ -175,7 +176,7 @@ public class NBTAPI
 	}
 
 	/** Creates a new NBTTag of the given type. Returns null if the creation failed */
-	@SuppressWarnings("rawtypes")
+	
 	private static Object createNBTTag(Class tagClass)
 	{
 		try
@@ -190,7 +191,7 @@ public class NBTAPI
 	}
 
 	/** Creates a new NBTTag of the given type, with a parameter. Returns null if the creation failed */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	private static Object createNBTTag(Class tagClass, Object value)
 	{
 		try
@@ -316,7 +317,7 @@ public class NBTAPI
 	}
 
 	/** Attempts to insert a new object into the NBTTagList */
-	@SuppressWarnings("rawtypes")
+	
 	private static void addNBTTagListEntry(Object nbtTagList, Class tagClass, Object value)
 	{
 		try
@@ -375,7 +376,7 @@ public class NBTAPI
 	}
 
 	/** Attempts to convert from the given NBTTag[Type] to a standard type */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	private static Object convert(Object nbtTag)
 	{
 		try
