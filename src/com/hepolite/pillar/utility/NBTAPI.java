@@ -1,4 +1,4 @@
-package com.hepolite.pillar.utility;
+package com.hepolite.mmob.utility;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import com.hepolite.pillar.logging.Log;
+import com.hepolite.mmob.Log;
 
 public class NBTAPI
 {
@@ -123,7 +123,7 @@ public class NBTAPI
 			NBTTagCompound_getKeys = classNBTTagCompound.getMethod("c");
 			NBTTagList_add = classNBTTagList.getMethod("add", classNBTBase);
 			NBTTagList_remove = classNBTTagList.getMethod("remove", int.class);
-			NBTTagList_get = classNBTTagList.getMethod("h", int.class);
+			NBTTagList_get = classNBTTagList.getMethod("get", int.class);
 			NBTTagList_size = classNBTTagList.getMethod("size");
 			NBTTagString_get = classNBTTagString.getMethod("c_");
 			NBTTagInt_get = classNBTTagInt.getMethod("e");
