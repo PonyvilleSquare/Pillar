@@ -132,7 +132,7 @@ public class NBTAPI
 			NBTTagShort_get = classNBTTagShort.getMethod("f");
 			NBTTagByte_get = classNBTTagByte.getMethod("g");
 			NBTTagFloat_get = classNBTTagFloat.getMethod("i");
-			NBTTagDouble_get = classNBTTagDouble.getMethod("h");
+			NBTTagDouble_get = classNBTTagDouble.getMethod("asDouble");
 
 			// Finalize
 			Log.log("No problems were detected in the NBT API!");
