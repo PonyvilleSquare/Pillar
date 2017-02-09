@@ -3,8 +3,8 @@ plugins {
 	id 'eclipse'
 }
 
-group = 'com.brohoof'
-version = '23'
+group = 'com.hepolite'
+version = '1.0.4'
 
 repositories {
 	jcenter()
@@ -12,25 +12,9 @@ repositories {
 		name 'spigot'
 		url 'https://hub.spigotmc.org/nexus/content/groups/public/'
 	}
-	maven {
-		name 'sk89q'
-		url 'https://maven.sk89q.com/repo'
-	}
-	maven {
-		name 'vault-repo'
-		url 'http://nexus.hc.to/content/repositories/pub_releases'
-	}
-	maven {
-		name 'vanish'
-		url 'http://repo.kitteh.org/content/repositories/releases/'
-	}
 }
 dependencies {
 	compile 'org.bukkit:bukkit:1.11.2-R0.1-SNAPSHOT'
-	compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
-	compile 'net.milkbowl.vault:VaultAPI:1.6'
-	compile 'com.sk89q.worldedit:worldedit-bukkit:6.1.5'
-	compile 'com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT'
 	compile fileTree(dir: 'libs', include: '*.jar')
 }
 

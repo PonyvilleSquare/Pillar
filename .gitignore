@@ -59,4 +59,8 @@ local.properties
 .classpath
 .settings/
 .loadpath
-*.class
+
+#Gradle
+.idea/
+.gradle/
+build/
