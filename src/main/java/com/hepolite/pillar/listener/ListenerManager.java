@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,7 +49,7 @@ public class ListenerManager implements org.bukkit.event.Listener
 		if (message == null)
 			return;
 
-		message = message.replaceAll("<player>", event.getEntity().getName());
+		message = message.replaceAll("<player>", event.getEntity().getDisplayName() + ChatColor.RESET);
 		event.setDeathMessage(message);
 		Damager.setNextDeathMessage(null);
 	}

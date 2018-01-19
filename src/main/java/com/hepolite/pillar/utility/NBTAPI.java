@@ -12,38 +12,39 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import com.hepolite.pillar.Pillar;
 import com.hepolite.pillar.logging.Log;
+import com.hepolite.pillar.settings.Settings;
 
-@SuppressWarnings("rawtypes")
 public class NBTAPI
 {
 	// Control variables
-	private static String version;
+	private static Settings mappings;
 
 	// Resources that are needed
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classCraftItemStack;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNMSItemStack;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTBase;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagCompound;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagList;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagString;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagInt;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagLong;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagShort;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagByte;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagFloat;
-	
+	@SuppressWarnings("rawtypes")
 	private static Class classNBTTagDouble;
 
 	private static Field CraftItemStack_handle;
@@ -73,66 +74,68 @@ public class NBTAPI
 	{
 		try
 		{
+			mappings = new Settings(Pillar.getInstance(), "mappings"){};
+
 			// Grab various bits of data from the server
-			version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+			String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 
 			// Grab classes
 			classCraftItemStack = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.CraftItemStack");
-			classNMSItemStack = Class.forName("net.minecraft.server." + version + ".ItemStack");
+			classNMSItemStack = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.ItemStack"));
 
-			classNBTBase = Class.forName("net.minecraft.server." + version + ".NBTBase");
-			classNBTTagCompound = Class.forName("net.minecraft.server." + version + ".NBTTagCompound");
-			classNBTTagList = Class.forName("net.minecraft.server." + version + ".NBTTagList");
-			classNBTTagString = Class.forName("net.minecraft.server." + version + ".NBTTagString");
-			classNBTTagInt = Class.forName("net.minecraft.server." + version + ".NBTTagInt");
-			classNBTTagLong = Class.forName("net.minecraft.server." + version + ".NBTTagLong");
-			classNBTTagShort = Class.forName("net.minecraft.server." + version + ".NBTTagShort");
-			classNBTTagByte = Class.forName("net.minecraft.server." + version + ".NBTTagByte");
-			classNBTTagFloat = Class.forName("net.minecraft.server." + version + ".NBTTagFloat");
-			classNBTTagDouble = Class.forName("net.minecraft.server." + version + ".NBTTagDouble");
+			classNBTBase = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTBase"));
+			classNBTTagCompound = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagCompound"));
+			classNBTTagList = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagList"));
+			classNBTTagString = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagString"));
+			classNBTTagInt = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagInt"));
+			classNBTTagLong = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagLong"));
+			classNBTTagShort = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagShort"));
+			classNBTTagByte = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagByte"));
+			classNBTTagFloat = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagFloat"));
+			classNBTTagDouble = Class.forName("net.minecraft.server." + version + "." + mappings.getString("class.NBTTagDouble"));
 
 			// Grab fields
 			CraftItemStack_handle = classCraftItemStack.getDeclaredField("handle");
 			CraftItemStack_handle.setAccessible(true);
 
 			// Grab methods
-			ItemStack_setTag = classNMSItemStack.getMethod("setTag", classNBTTagCompound);
-			ItemStack_getTag = classNMSItemStack.getMethod("getTag");
-			ItemStack_hasTag = classNMSItemStack.getMethod("hasTag");
+			ItemStack_setTag = classNMSItemStack.getMethod(mappings.getString("method.ItemStack.setTag"), classNBTTagCompound);
+			ItemStack_getTag = classNMSItemStack.getMethod(mappings.getString("method.ItemStack.getTag"));
+			ItemStack_hasTag = classNMSItemStack.getMethod(mappings.getString("method.ItemStack.hasTag"));
 
 			CraftItemStack_asCraftCopy = classCraftItemStack.getMethod("asCraftCopy", ItemStack.class);
 
-			NBTTagCompound_setString = classNBTTagCompound.getMethod("setString", String.class, String.class);
-			NBTTagCompound_getString = classNBTTagCompound.getMethod("getString", String.class);
-			NBTTagCompound_setInt = classNBTTagCompound.getMethod("setInt", String.class, int.class);
-			NBTTagCompound_getInt = classNBTTagCompound.getMethod("getInt", String.class);
-			NBTTagCompound_setLong = classNBTTagCompound.getMethod("setLong", String.class, long.class);
-			NBTTagCompound_getLong = classNBTTagCompound.getMethod("getLong", String.class);
-			NBTTagCompound_setByte = classNBTTagCompound.getMethod("setByte", String.class, byte.class);
-			NBTTagCompound_getByte = classNBTTagCompound.getMethod("getByte", String.class);
-			NBTTagCompound_setShort = classNBTTagCompound.getMethod("setShort", String.class, short.class);
-			NBTTagCompound_getShort = classNBTTagCompound.getMethod("getShort", String.class);
-			NBTTagCompound_setFloat = classNBTTagCompound.getMethod("setFloat", String.class, float.class);
-			NBTTagCompound_getFloat = classNBTTagCompound.getMethod("getFloat", String.class);
-			NBTTagCompound_setDouble = classNBTTagCompound.getMethod("setDouble", String.class, double.class);
-			NBTTagCompound_getDouble = classNBTTagCompound.getMethod("getDouble", String.class);
-			NBTTagCompound_setTag = classNBTTagCompound.getMethod("set", String.class, classNBTBase);
-			NBTTagCompound_getCompound = classNBTTagCompound.getMethod("getCompound", String.class);
-			NBTTagCompound_getTag = classNBTTagCompound.getMethod("get", String.class);
-			NBTTagCompound_remove = classNBTTagCompound.getMethod("remove", String.class);
-			NBTTagCompound_hasKey = classNBTTagCompound.getMethod("hasKey", String.class);
-			NBTTagCompound_getKeys = classNBTTagCompound.getMethod("c");
-			NBTTagList_add = classNBTTagList.getMethod("add", classNBTBase);
-			NBTTagList_remove = classNBTTagList.getMethod("remove", int.class);
-			NBTTagList_get = classNBTTagList.getMethod("get", int.class);
-			NBTTagList_size = classNBTTagList.getMethod("size");
-			NBTTagString_get = classNBTTagString.getMethod("c_");
-			NBTTagInt_get = classNBTTagInt.getMethod("e");
-			NBTTagLong_get = classNBTTagLong.getMethod("d");
-			NBTTagShort_get = classNBTTagShort.getMethod("f");
-			NBTTagByte_get = classNBTTagByte.getMethod("g");
-			NBTTagFloat_get = classNBTTagFloat.getMethod("i");
-			NBTTagDouble_get = classNBTTagDouble.getMethod("asDouble");
+			NBTTagCompound_setString = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setString"), String.class, String.class);
+			NBTTagCompound_getString = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getString"), String.class);
+			NBTTagCompound_setInt = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setInt"), String.class, int.class);
+			NBTTagCompound_getInt = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getInt"), String.class);
+			NBTTagCompound_setLong = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setLong"), String.class, long.class);
+			NBTTagCompound_getLong = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getLong"), String.class);
+			NBTTagCompound_setByte = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setByte"), String.class, byte.class);
+			NBTTagCompound_getByte = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getByte"), String.class);
+			NBTTagCompound_setShort = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setShort"), String.class, short.class);
+			NBTTagCompound_getShort = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getShort"), String.class);
+			NBTTagCompound_setFloat = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setFloat"), String.class, float.class);
+			NBTTagCompound_getFloat = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getFloat"), String.class);
+			NBTTagCompound_setDouble = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setDouble"), String.class, double.class);
+			NBTTagCompound_getDouble = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getDouble"), String.class);
+			NBTTagCompound_setTag = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.setTag"), String.class, classNBTBase);
+			NBTTagCompound_getCompound = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getCompound"), String.class);
+			NBTTagCompound_getTag = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getTag"), String.class);
+			NBTTagCompound_remove = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.remove"), String.class);
+			NBTTagCompound_hasKey = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.hasKey"), String.class);
+			NBTTagCompound_getKeys = classNBTTagCompound.getMethod(mappings.getString("method.NBTTagCompound.getKeys"));
+			NBTTagList_add = classNBTTagList.getMethod(mappings.getString("method.NBTTagList.add"), classNBTBase);
+			NBTTagList_remove = classNBTTagList.getMethod(mappings.getString("method.NBTTagList.remove"), int.class);
+			NBTTagList_get = classNBTTagList.getMethod(mappings.getString("method.NBTTagList.get"), int.class);
+			NBTTagList_size = classNBTTagList.getMethod(mappings.getString("method.NBTTagList.size"));
+			NBTTagString_get = classNBTTagString.getMethod(mappings.getString("method.NBTTagString.get"));
+			NBTTagInt_get = classNBTTagInt.getMethod(mappings.getString("method.NBTTagInt.get"));
+			NBTTagLong_get = classNBTTagLong.getMethod(mappings.getString("method.NBTTagLong.get"));
+			NBTTagShort_get = classNBTTagShort.getMethod(mappings.getString("method.NBTTagShort.get"));
+			NBTTagByte_get = classNBTTagByte.getMethod(mappings.getString("method.NBTTagByte.get"));
+			NBTTagFloat_get = classNBTTagFloat.getMethod(mappings.getString("method.NBTTagFloat.get"));
+			NBTTagDouble_get = classNBTTagDouble.getMethod(mappings.getString("method.NBTTagDouble.get"));
 
 			// Finalize
 			Log.log("No problems were detected in the NBT API!");
@@ -176,7 +179,7 @@ public class NBTAPI
 	}
 
 	/** Creates a new NBTTag of the given type. Returns null if the creation failed */
-	
+	@SuppressWarnings("rawtypes")
 	private static Object createNBTTag(Class tagClass)
 	{
 		try
@@ -191,7 +194,7 @@ public class NBTAPI
 	}
 
 	/** Creates a new NBTTag of the given type, with a parameter. Returns null if the creation failed */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Object createNBTTag(Class tagClass, Object value)
 	{
 		try
@@ -317,7 +320,7 @@ public class NBTAPI
 	}
 
 	/** Attempts to insert a new object into the NBTTagList */
-	
+	@SuppressWarnings("rawtypes")
 	private static void addNBTTagListEntry(Object nbtTagList, Class tagClass, Object value)
 	{
 		try
@@ -376,7 +379,7 @@ public class NBTAPI
 	}
 
 	/** Attempts to convert from the given NBTTag[Type] to a standard type */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Object convert(Object nbtTag)
 	{
 		try

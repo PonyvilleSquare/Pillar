@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -20,6 +21,7 @@ import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
 import com.hepolite.pillar.listener.ListenerManager;
 
+@SuppressWarnings("deprecation")
 public class Damager
 {
 	private static final Function<? super Double, Double> ZERO = Functions.constant(-0.0);
@@ -38,28 +40,28 @@ public class Damager
 		return nextDeathMessage;
 	}
 
-	/** Applies some damage to the target */
-	public static void doDamage(double damage, LivingEntity target, DamageCause cause)
+	/** Applies some damage to the target. Returns true if the damage was applied */
+	public static boolean doDamage(double damage, LivingEntity target, DamageCause cause)
 	{
-		doDamage(damage, target, null, cause);
+		return doDamage(damage, target, null, cause);
 	}
 
-	/** Applies some damage to the target, applied from the attacker */
-	public static void doDamage(double damage, LivingEntity target, LivingEntity attacker, DamageCause cause)
+	/** Applies some damage to the target, applied from the attacker. Returns true if the damage was applied */
+	public static boolean doDamage(double damage, LivingEntity target, LivingEntity attacker, DamageCause cause)
 	{
-		doDamage(target, attacker, cause, new EnumMap<DamageModifier, Double>(ImmutableMap.of(DamageModifier.BASE, Math.max(0.0, damage))), new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, ZERO)));
+		return doDamage(target, attacker, cause, new EnumMap<DamageModifier, Double>(ImmutableMap.of(DamageModifier.BASE, Math.max(0.0, damage))), new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, ZERO)));
 	}
 
-	/** Applies some damage to the target, applied from the attacker */
-	private static void doDamage(LivingEntity target, LivingEntity attacker, DamageCause cause, final Map<DamageModifier, Double> modifiers, final Map<DamageModifier, ? extends Function<? super Double, Double>> functions)
+	/** Applies some damage to the target, applied from the attacker. Returns true if the damage was applied */
+	private static boolean doDamage(LivingEntity target, LivingEntity attacker, DamageCause cause, final Map<DamageModifier, Double> modifiers, final Map<DamageModifier, ? extends Function<? super Double, Double>> functions)
 	{
 		if (target == null || target.isDead() || !target.isValid())
-			return;
+			return false;
 		if (target instanceof Player)
 		{
 			Player player = (Player) target;
 			if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
-				return;
+				return false;
 		}
 
 		EntityDamageEvent event = null;
@@ -75,19 +77,25 @@ public class Damager
 			target.setLastDamage(finalDamage);
 			target.setLastDamageCause(event);
 			target.setHealth(Math.max(0.0, target.getHealth() - finalDamage));
+			return true;
 		}
 		setNextDeathMessage(null);
+		return false;
 	}
 
-	/** Applies some healing to the given target */
-	public static void doHeal(double heal, LivingEntity target, RegainReason reason)
+	/** Applies some healing to the given target. Returns true if the heal was applied */
+	public static boolean doHeal(double heal, LivingEntity target, RegainReason reason)
 	{
 		if (target.isDead() || !target.isValid())
-			return;
+			return false;
 		EntityRegainHealthEvent event = new EntityRegainHealthEvent(target, Math.max(0.0, heal), reason);
 		ListenerManager.post(event);
 		if (!event.isCancelled())
-			target.setHealth(Math.min(target.getMaxHealth(), target.getHealth() + event.getAmount()));
+		{
+			target.setHealth(Math.min(target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), target.getHealth() + event.getAmount()));
+			return true;
+		}
+		return false;
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////
@@ -143,8 +151,8 @@ public class Damager
 				else
 					Damager.setNextDeathMessage("<player> was killed by lightning");
 
-				doDamage(strength, entity, attacker, DamageCause.LIGHTNING);
-				entity.setFireTicks((int) (15.0f * strength));
+				if (doDamage(strength, entity, attacker, DamageCause.LIGHTNING))
+					entity.setFireTicks((int) (15.0f * strength));
 			}
 		}
 	}

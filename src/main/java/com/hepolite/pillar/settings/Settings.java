@@ -45,7 +45,6 @@ public abstract class Settings
 		this.name = name;
 		this.configFile = new File(plugin.getDataFolder(), "config_" + name + ".yml");
 		this.config = YamlConfiguration.loadConfiguration(configFile);
-
 	}
 
 	/** Initializes the settings */
@@ -110,7 +109,7 @@ public abstract class Settings
 	// ///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/** Assigns one default value to the calling configuration class */
-	public void set(String propertyName, Object value)
+	public final void set(String propertyName, Object value)
 	{
 		if (value instanceof SoundSetting)
 			set(propertyName, (SoundSetting) value);
@@ -142,7 +141,7 @@ public abstract class Settings
 			config.set(propertyName, value);
 	}
 
-	private void set(String propertyName, SoundSetting setting)
+	private final void set(String propertyName, SoundSetting setting)
 	{
 		config.set(propertyName + ".enable", setting.enable);
 		config.set(propertyName + ".sound", setting.sound.toString().toLowerCase());
@@ -150,20 +149,20 @@ public abstract class Settings
 		config.set(propertyName + ".pitch", setting.pitch);
 	}
 
-	private void set(String propertyName, PotionEffectSetting setting)
+	private final void set(String propertyName, PotionEffectSetting setting)
 	{
 		config.set(propertyName + ".type", setting.type.getName().toLowerCase());
 		config.set(propertyName + ".duration", setting.duration);
 		config.set(propertyName + ".amplifier", setting.amplifier);
 	}
 
-	private void set(String propertyName, PotionEffectSetting[] setting)
+	private final void set(String propertyName, PotionEffectSetting[] setting)
 	{
 		for (int i = 0; i < setting.length; i++)
 			set(propertyName + ".Effect " + i, setting[i]);
 	}
 
-	private void set(String propertyName, ItemStack item)
+	private final void set(String propertyName, ItemStack item)
 	{
 		config.set(propertyName + ".type", item.getType().toString().toLowerCase());
 		config.set(propertyName + ".amount", item.getAmount());
@@ -181,18 +180,18 @@ public abstract class Settings
 			set(propertyName + ".nbt", tag);
 	}
 
-	private void set(String propertyName, ItemStack[] items)
+	private final void set(String propertyName, ItemStack[] items)
 	{
 		for (int i = 0; i < items.length; i++)
 			set(propertyName + "Item " + i, items[i]);
 	}
 
-	private void set(String propertyName, PotionEffectType setting)
+	private final void set(String propertyName, PotionEffectType setting)
 	{
 		config.set(propertyName, setting.getName().toLowerCase());
 	}
 
-	private void set(String propertyName, PotionEffectType[] setting)
+	private final void set(String propertyName, PotionEffectType[] setting)
 	{
 		List<String> types = new LinkedList<String>();
 		for (PotionEffectType type : setting)
@@ -200,12 +199,12 @@ public abstract class Settings
 		config.set(propertyName, types);
 	}
 
-	private void set(String propertyName, Enchantment setting)
+	private final void set(String propertyName, Enchantment setting)
 	{
 		config.set(propertyName, setting.getName().toLowerCase());
 	}
 
-	private void set(String propertyName, Enchantment[] setting)
+	private final void set(String propertyName, Enchantment[] setting)
 	{
 		List<String> types = new LinkedList<String>();
 		for (Enchantment enchantment : setting)
@@ -213,12 +212,12 @@ public abstract class Settings
 		config.set(propertyName, types);
 	}
 
-	private void set(String propertyName, EntityType setting)
+	private final void set(String propertyName, EntityType setting)
 	{
 		config.set(propertyName, setting.toString().toLowerCase());
 	}
 
-	private void set(String propertyName, EntityType[] setting)
+	private final void set(String propertyName, EntityType[] setting)
 	{
 		List<String> types = new LinkedList<String>();
 		for (EntityType entityType : setting)
@@ -226,7 +225,7 @@ public abstract class Settings
 		config.set(propertyName, types);
 	}
 
-	public void set(String field, NBTTag tag)
+	public final void set(String field, NBTTag tag)
 	{
 		set(field, (Object) null);
 		for (String key : tag.getKeys())
@@ -255,7 +254,7 @@ public abstract class Settings
 		}
 	}
 
-	public void set(String field, NBTList tag)
+	public final void set(String field, NBTList tag)
 	{
 		set(field, (Object) null);
 		for (int i = 0; i < tag.size(); i++)
@@ -285,73 +284,73 @@ public abstract class Settings
 	}
 
 	/** Returns true if the given property exists in the config file */
-	public boolean has(String propertyName)
+	public final boolean has(String propertyName)
 	{
 		return config.contains(propertyName);
 	}
 
 	/** Removes the given field from the config */
-	public void remove(String propertyName)
+	public final void remove(String propertyName)
 	{
 		config.set(propertyName, null);
 	}
 
 	/** Returns a boolean value from the config file */
-	public boolean getBool(String propertyName)
+	public final boolean getBool(String propertyName)
 	{
 		return config.getBoolean(propertyName);
 	}
 
 	/** Returns a long value from the config file */
-	public long getLong(String propertyName)
+	public final long getLong(String propertyName)
 	{
 		return config.getLong(propertyName);
 	}
 
 	/** Returns an integer value from the config file */
-	public int getInt(String propertyName)
+	public final int getInt(String propertyName)
 	{
 		return config.getInt(propertyName);
 	}
 
 	/** Returns a short value from the config file */
-	public short getShort(String propertyName)
+	public final short getShort(String propertyName)
 	{
 		return (short) config.getInt(propertyName);
 	}
 
 	/** Returns a byte value from the config file */
-	public byte getByte(String propertyName)
+	public final byte getByte(String propertyName)
 	{
 		return (byte) config.getInt(propertyName);
 	}
 
 	/** Returns a floating point value from the config file */
-	public float getFloat(String propertyName)
+	public final float getFloat(String propertyName)
 	{
 		return (float) config.getDouble(propertyName);
 	}
 
 	/** Returns a double point value from the config file */
-	public double getDouble(String propertyName)
+	public final double getDouble(String propertyName)
 	{
 		return config.getDouble(propertyName);
 	}
 
 	/** Returns a string from the config file */
-	public String getString(String propertyName)
+	public final String getString(String propertyName)
 	{
 		return config.getString(propertyName);
 	}
 
 	/** Returns a list of string from the config file */
-	public List<String> getStringList(String propertyName)
+	public final List<String> getStringList(String propertyName)
 	{
 		return config.getStringList(propertyName);
 	}
 
 	/** Returns a set of property keys from the config file */
-	public Set<String> getKeys(String propertyName)
+	public final Set<String> getKeys(String propertyName)
 	{
 		ConfigurationSection section = config.getConfigurationSection(propertyName);
 		if (section == null)
@@ -360,7 +359,7 @@ public abstract class Settings
 	}
 
 	/** Returns a sound setting from the config file */
-	public SoundSetting getSound(String propertyName)
+	public final SoundSetting getSound(String propertyName)
 	{
 		boolean enable = getBool(propertyName + ".enable");
 		Sound sound = Sound.valueOf(getString(propertyName + ".sound").toUpperCase());
@@ -370,7 +369,7 @@ public abstract class Settings
 	}
 
 	/** Returns a potion effect setting from the config file */
-	public PotionEffectSetting getPotionEffect(String propertyName)
+	public final PotionEffectSetting getPotionEffect(String propertyName)
 	{
 		PotionEffectType type = PotionEffectType.getByName(getString(propertyName + ".type").toUpperCase());
 		int duration = getInt(propertyName + ".duration");
@@ -379,7 +378,7 @@ public abstract class Settings
 	}
 
 	/** Returns multiple a potion effect setting from the config file */
-	public List<PotionEffectSetting> getPotionEffects(String propertyName)
+	public final List<PotionEffectSetting> getPotionEffects(String propertyName)
 	{
 		List<PotionEffectSetting> list = new LinkedList<PotionEffectSetting>();
 		Set<String> effects = getKeys(propertyName);
@@ -389,13 +388,13 @@ public abstract class Settings
 	}
 
 	/** Returns a potion effect type from the config file */
-	public PotionEffectType getPotionEffectType(String propertyName)
+	public final PotionEffectType getPotionEffectType(String propertyName)
 	{
 		return PotionEffectType.getByName(getString(propertyName).toUpperCase());
 	}
 
 	/** Returns multiple potion effect types from the config file */
-	public List<PotionEffectType> getPotionEffectTypes(String propertyName)
+	public final List<PotionEffectType> getPotionEffectTypes(String propertyName)
 	{
 		List<PotionEffectType> types = new LinkedList<PotionEffectType>();
 		for (String string : getStringList(propertyName))
@@ -408,13 +407,13 @@ public abstract class Settings
 	}
 
 	/** Returns an enchantment type from the config file */
-	public Enchantment getEnchantmentType(String propertyName)
+	public final Enchantment getEnchantmentType(String propertyName)
 	{
 		return Enchantment.getByName(getString(propertyName).toUpperCase());
 	}
 
 	/** Returns multiple enchantment types from the config file */
-	public List<Enchantment> getEnchantmentTypes(String propertyName)
+	public final List<Enchantment> getEnchantmentTypes(String propertyName)
 	{
 		List<Enchantment> types = new LinkedList<Enchantment>();
 		for (String string : getStringList(propertyName))
@@ -427,7 +426,7 @@ public abstract class Settings
 	}
 
 	/** Returns an entity type from the config file */
-	public EntityType getEntityType(String propertyName)
+	public final EntityType getEntityType(String propertyName)
 	{
 		EntityType type = null;
 		try
@@ -441,7 +440,7 @@ public abstract class Settings
 	}
 
 	/** Returns multiple entity types from the config file */
-	public List<EntityType> getEntityTypes(String propertyName)
+	public final List<EntityType> getEntityTypes(String propertyName)
 	{
 		List<EntityType> types = new LinkedList<EntityType>();
 		for (String string : getStringList(propertyName))
@@ -461,7 +460,7 @@ public abstract class Settings
 	}
 
 	/** Returns a full item with lore, type and display name */
-	public ItemStack getItem(String propertyName)
+	public final ItemStack getItem(String propertyName)
 	{
 		// Load up all the data
 		Material material = null;
@@ -504,7 +503,7 @@ public abstract class Settings
 	}
 
 	/** Returns a list of full items with lore, type and display name */
-	public List<ItemStack> getItems(String propertyName)
+	public final List<ItemStack> getItems(String propertyName)
 	{
 		List<ItemStack> items = new LinkedList<ItemStack>();
 		Set<String> keys = getKeys(propertyName);
@@ -514,7 +513,7 @@ public abstract class Settings
 	}
 
 	/** Loads up a NBT Tag from the configuration */
-	public NBTTag getNBTTag(String field)
+	public final NBTTag getNBTTag(String field)
 	{
 		NBTTag tag = new NBTTag();
 
@@ -545,7 +544,7 @@ public abstract class Settings
 	}
 
 	/** Loads up a NBT List from the configuration */
-	public NBTList getNBTList(String field)
+	public final NBTList getNBTList(String field)
 	{
 		NBTList tag = new NBTList();
 
@@ -577,7 +576,13 @@ public abstract class Settings
 	// ///////////////////////////////////////////////////////////////////////////////////////////
 
 	/** Converts an itemstack to a simple itemstack string, used for storage. Returns null if item is null */
-	public String writeSimpleItem(ItemStack item)
+	public final String writeSimpleItem(ItemStack item)
+	{
+		return writeSimpleItem(item, true);
+	}
+	
+	/** Converts an itemstack to a simple itemstack string, used for storage. Returns null if item is null */
+	public final String writeSimpleItem(ItemStack item, boolean writeName)
 	{
 		if (item == null)
 			return null;
@@ -586,7 +591,7 @@ public abstract class Settings
 		String itemString = item.getType().toString().toLowerCase();
 		if (item.getDurability() != 0)
 			itemString += "-" + item.getDurability();
-		if (itemMeta != null && itemMeta.hasDisplayName())
+		if (itemMeta != null && itemMeta.hasDisplayName() && writeName)
 			itemString += ";" + itemMeta.getDisplayName().replaceAll(String.valueOf(ChatColor.COLOR_CHAR), "&");
 		if (item.getAmount() != 1)
 			itemString += "=" + item.getAmount();
@@ -594,7 +599,7 @@ public abstract class Settings
 	}
 
 	/** Returns a simple itemstack, which is stored on the form MATERIAL-META;NAME=AMOUNT. Meta, name and amount are optional parameters */
-	public ItemStack parseSimpleItem(String itemString)
+	public final ItemStack parseSimpleItem(String itemString)
 	{
 		Material material = Material.AIR;
 		short meta = 0;
@@ -632,7 +637,7 @@ public abstract class Settings
 	}
 
 	/** Converts an location to a simple location string, used for storage. Returns null if the location is null */
-	public String writeSimpleLocation(Location location)
+	public final String writeSimpleLocation(Location location)
 	{
 		if (location == null || location.getWorld() == null)
 			return null;
@@ -640,7 +645,7 @@ public abstract class Settings
 	}
 
 	/** Returns a simple location, which is stored on the form WORLD_NAME=X=Y=Z */
-	public Location parseSimpleLocation(String locationString)
+	public final Location parseSimpleLocation(String locationString)
 	{
 		String parts[] = locationString.split("=");
 		World world = null;
@@ -680,7 +685,7 @@ public abstract class Settings
 		}
 
 		/** Plays the sound at the given location, if the sound is enabled */
-		public void play(Location location)
+		public final void play(Location location)
 		{
 			if (enable && sound != null && location != null)
 				location.getWorld().playSound(location, sound, volume, pitch);
@@ -703,7 +708,7 @@ public abstract class Settings
 		}
 
 		/** Creates a new potion effect object from the potion effect data */
-		public PotionEffect create()
+		public final PotionEffect create()
 		{
 			if (type != null)
 				return new PotionEffect(type, duration, amplifier - 1);

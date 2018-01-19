@@ -1,6 +1,6 @@
 name: Pillar
 authors: [Hepolite]
 main: com.hepolite.pillar.Pillar
-version: 1.0.4
+version: $version
 description: >
              Core plugin for many things

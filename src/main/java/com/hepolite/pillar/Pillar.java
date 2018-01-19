@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.hepolite.pillar.database.Database;
 import com.hepolite.pillar.listener.ListenerManager;
+import com.hepolite.pillar.listener.PacketListener;
 import com.hepolite.pillar.logging.Log;
 import com.hepolite.pillar.utility.NBTAPI;
 
@@ -13,6 +14,8 @@ public class Pillar extends JavaPlugin
 	private static Pillar instance = null;
 
 	private ListenerManager listenerManager;
+	@SuppressWarnings("unused")
+	private PacketListener packetListener;
 
 	int scheduledTask = -1;
 
@@ -24,6 +27,7 @@ public class Pillar extends JavaPlugin
 		NBTAPI.initialize();
 
 		listenerManager = new ListenerManager();
+		packetListener = new PacketListener();
 		getServer().getPluginManager().registerEvents(listenerManager, instance);
 
 		// Set up a task that runs once every tick
